@@ -99,7 +99,7 @@ Activity Tab
 [BONUS] Interactive Prototype
 
 # Video 
-**Here is the video Walkthrough
+** Here is the video Walkthrough
 https://www.loom.com/share/239c48ce36954c16a2b30740d33bf86a?sid=264d572f-d512-4892-8f8e-44a46044cc5f
 
 # Schema
