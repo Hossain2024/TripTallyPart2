@@ -1,12 +1,3 @@
-Things to do: 
-
-- [ ] two navigation Tab(Home , Activity)
-- [yes] HomeScreen shows a budgest label and allows users to enter an amount
--[ ] Activity screen Shows a list of Activity
-- [ ] users are able to check off activity
-- [ ] Users can see the activities doen along with the cost in the homescreen
-- [ ] users can see updated balance on the homescreen after completing each task
-
 # Original App Design Project - README Template
 # TripTally
 
@@ -83,15 +74,33 @@ Activity Tab
     =>Create new Activity
     =>Home Screen
 
+# Things to do: 
 
+- [ ] two navigation Tab(Home , Activity)
+- [yes] HomeScreen shows a budgest label and allows users to enter an amount
+-[ ] Activity screen Shows a list of Activity
+- [ ] users are able to check off activity
+- [ ] Users can see the activities doen along with the cost in the homescreen
+- [ ] users can see updated balance on the homescreen after completing each task
+# Things completed:
+
+- [yes ] two navigation Tab(Home , Activity)
+- [yes] HomeScreen shows a budgest label and allows users to enter an amount
+-[ yes] Activity screen Shows a list of Activity
+-[yes] Users can add an activity
+- [yes ] users are able to check off activity
+- [No ] Users can see the activities doen along with the cost in the homescreen
+- [ yes] users can see updated balance on the homescreen after completing each task
 # Wireframes
  "![image](https://github.com/user-attachments/assets/82c9d58e-24ee-409d-b292-09d3668f2b38)
 ">
 
-
-
 [BONUS] Digital Wireframes & Mockups
 [BONUS] Interactive Prototype
+
+# Video 
+**Here is the video Walkthrough
+https://www.loom.com/share/239c48ce36954c16a2b30740d33bf86a?sid=264d572f-d512-4892-8f8e-44a46044cc5f
 
 # Schema
 [This section will be completed in Unit 9]
