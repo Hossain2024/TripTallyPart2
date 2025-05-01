@@ -11,12 +11,18 @@ class TaskListViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     var tasks = [Task]()
+    
+    var currentBudget: Double = 0.0  // Store current budget
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.tableHeaderView = UIView()
         tableView.dataSource = self
         tableView.delegate = self
-        
+        if let savedBudget = UserDefaults.standard.string(forKey: "userBudget"),
+        let budget = Double(savedBudget.trimmingCharacters(in: .symbols)) {
+        currentBudget = budget
+        }
         
     }
     
@@ -31,23 +37,73 @@ class TaskListViewController: UIViewController {
         performSegue(withIdentifier: "ComposeSegue", sender: nil)
     }
     
+    func deleteTask(_ task: Task, amount: Double) {
+        if let savedBudget = UserDefaults.standard.string(forKey: "userBudget"),
+           let currentBudget = Double(savedBudget.trimmingCharacters(in: .symbols)) {
+            
+           
+            let newBudget = currentBudget - amount
+            
+            let updatedBudget = String(format: "$%.2f", newBudget)
+            UserDefaults.standard.set(updatedBudget, forKey: "userBudget")
+            
+           
+            NotificationCenter.default.post(name: NSNotification.Name("budgetUpdated"), object: updatedBudget)
+            
+            if let viewController = navigationController?.viewControllers.first(where: { $0 is ViewController }) as? ViewController {
+                viewController.updateBudgetLabel(newAmount: updatedBudget)
+            }
+        }
+    }
+
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "ComposeSegue" {
             if let composeNavController = segue.destination as? UINavigationController,
                 let composeViewController = composeNavController.topViewController as? TaskComposeViewController {
 
-                // Pass the task to edit if available
+                
                 composeViewController.taskToEdit = sender as? Task
 
-                // Set the closure that will handle the task after it is saved
+              
                 composeViewController.onComposeTask = { [weak self] task in
-                    task.save()  // Save the task
-                    self?.refreshTasks()  // Refresh the task list to show the newly added or edited task
+                    task.save()
+                    self?.refreshTasks()  
                 }
             }
         }
     }
+    func showAmountAlert(task: Task, completion: @escaping (Double?) -> Void) {
+        let alert = UIAlertController(
+            title: "Enter Amount",
+            message: "Enter the amount to subtract from your budget",
+            preferredStyle: .alert
+        )
+        
+        alert.addTextField { textField in
+            textField.placeholder = "Amount"
+            textField.keyboardType = .decimalPad
+        }
+        
+        let saveAction = UIAlertAction(title: "OK", style: .default) { _ in
+            if let text = alert.textFields?.first?.text,
+               let amount = Double(text) {
+                completion(amount)
+            } else {
+                completion(nil)
+            }
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
+            completion(nil)
+        }
+        
+        alert.addAction(saveAction)
+        alert.addAction(cancelAction)
+        
+        present(alert, animated: true, completion: nil)
+    }
+
 
     
     private func refreshTasks() {
@@ -82,15 +138,25 @@ extension TaskListViewController: UITableViewDataSource {
         // 2.
         let task = tasks[indexPath.row]
         // 3.
-        cell.configure(with: task, onCompleteButtonTapped: { [weak self] task in
-            // i.
-            task.save()
-            // ii.
-            self?.refreshTasks()
-        })
+        cell.configure(
+            with: task,
+            onRequestAmountAndComplete: { [weak self] task, completion in
+                self?.showAmountAlert(task: task, completion: completion)
+            },
+            onCompleteButtonTapped: { [weak self] completedTask, amount in
+                guard let self = self else { return }
+                if let index = self.tasks.firstIndex(where: { $0.id == completedTask.id }) {
+                    self.tasks.remove(at: index)
+                    Task.save(self.tasks)
+                    self.deleteTask(completedTask, amount: amount)
+                    tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .fade)
+                }
+            }
+        )
         // 4.
         return cell
     }
+
     
 
 

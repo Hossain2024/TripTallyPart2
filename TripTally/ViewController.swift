@@ -13,15 +13,22 @@ class ViewController: UIViewController {
     @IBOutlet weak var currencyLabel: UILabel!
     let budgetKey = "userBudget"
     
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let savedBudget = UserDefaults.standard.string(forKey: budgetKey) {
-        currencyLabel.text = savedBudget
-            
+        NotificationCenter.default.addObserver(self, selector: #selector(handleBudgetUpdate(_:)), name: NSNotification.Name("budgetUpdated"), object: nil)
+        if let savedBudget = UserDefaults.standard.string(forKey: "userBudget") {
+            currencyLabel.text = savedBudget
         }
-        
+    }
+
+    @objc func handleBudgetUpdate(_ notification: Notification) {
+        if let newAmount = notification.object as? String {
+            updateBudgetLabel(newAmount: newAmount)
+        }
+    }
+
+    func updateBudgetLabel(newAmount: String) {
+        currencyLabel.text = newAmount
     }
     
     @IBAction func editButtonTapped(_ sender: UIButton) {
